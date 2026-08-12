@@ -1,0 +1,50 @@
+name: Validate deploy PR
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'apps/microsite/production/**'
+
+jobs:
+  validate-yaml:
+    name: Validar Sintaxis YAML
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout del código de la PR
+        uses: actions/checkout@v4
+
+      - name: Verificar sintaxis con yamllint
+        run: |
+          # Instala un linter básico si no está en el runner
+          if ! command -v yamllint &> /dev/null; then
+            sudo apt-get update && sudo apt-get install -y yamllint
+          fi
+          # Valida los archivos de producción
+          yamllint apps/microsite/production/
+
+  validate-docker-image:
+    name: Verificar Imagen en Docker Hub
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout del código de la PR
+        uses: actions/checkout@v4
+
+      - name: Iniciar sesión en Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Extraer imagen del YAML y verificar existencia
+        run: |
+          # 1. Usamos yq v3 para extraer la imagen exacta del contenedor 'app'
+          IMAGE_PHP=$(yq r apps/microsite/production/deployment-php.yaml "spec.template.spec.containers.(name==app).image")
+          IMAGE_STATIC=$(yq r apps/microsite/production/deployment-static.yaml "spec.template.spec.containers.(name==app).image")
+          
+          echo "Validando imagen PHP: $IMAGE_PHP"
+          echo "Validando imagen Static: $IMAGE_STATIC"
+          
+          # 2. docker buildx imagetools inspect comprueba si el hash existe en el registro remoto sin descargar la imagen completa
+          docker buildx imagetools inspect "$IMAGE_PHP"
+          docker buildx imagetools inspect "$IMAGE_STATIC"
