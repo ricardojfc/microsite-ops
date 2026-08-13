@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: static-service
+spec:
+  type: NodePort     # Expuesto al exterior del cluster
+  selector:
+    app: static        # Coincide con las labels de los Pods
+  ports:
+    - protocol: TCP
+      port: 80        # Puerto que los otros pods usarán para conectarse
+      targetPort: 80  # Puerto del contenedor
+      nodePort: 30011
