@@ -14,6 +14,6 @@ spec:
     spec:
       containers:
         - name: static
-          image: ricardojfc/microsite-static:sha-f709007
+          image: ricardojfc/microsite-static:sha-561ff7a
           ports:
             - containerPort: 80
