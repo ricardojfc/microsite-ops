@@ -28,7 +28,7 @@ jobs:
       - name: Extract image from YAML y check it exists
         run: |
           IMAGE_PHP=$(yq -r '.spec.template.spec.containers[] | select(.name == "app") | .image' apps/microsite/environments/production/app-deployment.yaml)
-          IMAGE_STATIC=$(yq -r '.spec.template.spec.containers[] | select(.name == "app") | .image' apps/microsite/environments/production/static-deployment.yaml)
+          IMAGE_STATIC=$(yq -r '.spec.template.spec.containers[] | select(.name == "static") | .image' apps/microsite/environments/production/static-deployment.yaml)
           
           echo "Validating app image: $IMAGE_PHP"
           echo "Validating static image: $IMAGE_STATIC"
