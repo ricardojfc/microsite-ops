@@ -31,9 +31,15 @@ fi
 # 2. Cluster security control (Kubernetes context)
 echo -e "\n${YELLOW}[2/4] Checking target cluster...${NC}"
 CURRENT_CONTEXT=$(kubectl config current-context)
-CURRENT_NS=$(kubectl config view --minify --output 'jsonpath={..namespace}' 2>/dev/null || echo "default")
+NS=$(kubectl config view --minify --output 'jsonpath={..namespace}' 2>/dev/null)
+if [ -z $NS ]
+then
+    CURRENT_NS="default"
+else
+    CURRENT_NS=$NS
+fi
 
-echo -e "You are connected to the cluetr:  ${RED}${CURRENT_CONTEXT}${NC}"
+echo -e "You are connected to the cluster:  ${RED}${CURRENT_CONTEXT}${NC}"
 echo -e "Namespace: ${RED}${CURRENT_NS}${NC}"
 echo -e "--------------------------------------------------------"
 read -p "¿Is this the right production environment? (y/n): " confirm
