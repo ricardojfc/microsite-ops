@@ -17,7 +17,7 @@ jobs:
 
       - name: Verify syntax with yamllint
         run: |
-          yamllint apps/microsite/envirnments/production/
+          yamllint apps/microsite/environments/production/
 
       - name: Verify  image in Docker Hub
         uses: docker/login-action@v3
