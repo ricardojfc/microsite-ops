@@ -14,6 +14,6 @@ spec:
     spec:
       containers:
         - name: app
-          image: ricardojfc/microsite-php:sha-8ada071
+          image: ricardojfc/microsite-php:sha-b4e7181
           ports:
             - containerPort: 80
